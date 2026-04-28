@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELDJI.19 · The Empire</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #0a0a0c;
+            overflow-x: hidden;
+            color: #fff;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f0f13; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #d4af37, #ff6b6b); border-radius: 10px; }
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(5, 5, 10, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, #d4af37, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-family: 'Orbitron', monospace;
+        }
+        .nav-links { display: flex; gap: 2.5rem; align-items: center; }
+        .nav-links a { color: #eee; text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover { color: #d4af37; }
+        .insta-btn-nav {
+            background: linear-gradient(45deg, #f09433, #d62976, #962fbf);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+        }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            padding: 0 5%;
+        }
+        .hero-content { max-width: 800px; }
+        .glow-text { font-size: 1.2rem; color: #d4af37; letter-spacing: 3px; margin-bottom: 1rem; }
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, #d4af37, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero p { font-size: 1.2rem; color: #ccc; margin-bottom: 2rem; }
+        .btn-group-hero { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+        .btn-primary {
+            background: linear-gradient(95deg, #d4af37, #ff6b6b);
+            padding: 1rem 2.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #0a0a0c;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4); }
+        .btn-outline {
+            border: 2px solid #d4af37;
+            padding: 1rem 2.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #d4af37;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        .btn-outline:hover { background: #d4af37; color: #0a0a0c; }
+        .gallery-section {
+            padding: 6rem 5%;
+            background: linear-gradient(180deg, #0a0a0c 0%, #141416 100%);
+            position: relative;
+            z-index: 2;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            font-family: 'Orbitron', monospace;
+        }
+        .section-title span { background: linear-gradient(135deg, #d4af37, #ff6b6b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            aspect-ratio: 1 / 1;
+            background: #1a1a2e;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            display: flex;
+            align-items: flex-end;
+            padding: 1.5rem;
+            opacity: 0;
+            transition: 0.5s;
+        }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+        .gallery-item:hover img { transform: scale(1.1); }
+        .stats-section {
+            padding: 5rem 5%;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 3rem;
+            text-align: center;
+            background: #060608;
+        }
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #d4af37, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .cta-section {
+            padding: 5rem 5%;
+            text-align: center;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        }
+        .email-input {
+            display: inline-flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .email-input input {
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            width: 300px;
+            background: #0f0f13;
+            color: white;
+            border: 1px solid #d4af37;
+        }
+        .footer {
+            padding: 3rem 5%;
+            text-align: center;
+            background: #020203;
+            border-top: 1px solid #d4af3720;
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .social-icons a {
+            color: #d4af37;
+            font-size: 1.8rem;
+            transition: 0.3s;
+        }
+        .social-icons a:hover { transform: translateY(-5px); color: #ff6b6b; }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.8rem; }
+            .navbar { padding: 1rem; flex-direction: column; gap: 1rem; }
+            .nav-links { gap: 1rem; }
+            .section-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<nav class="navbar">
+    <div class="logo">ELDJI.19</div>
+    <div class="nav-links">
+        <a href="#home">HOME</a>
+        <a href="#gallery">GALLERY</a>
+        <a href="#stats">STATS</a>
+        <a href="https://instagram.com/eldji.19" target="_blank" class="insta-btn-nav"><i class="fab fa-instagram"></i> @eldji.19</a>
+    </div>
+</nav>
+
+<section id="home" class="hero">
+    <div class="hero-content">
+        <div class="glow-text">✦ THE DIGITAL EMPIRE ✦</div>
+        <h1>ELDJI.19<br>Il futuro è adesso</h1>
+        <p>Visual artist, street culture, luxury underground. Benvenuto nell'universo di Eldji.</p>
+        <div class="btn-group-hero">
+            <a href="#gallery" class="btn-primary"><i class="fas fa-crown"></i> Esplora la gallery</a>
+            <a href="https://instagram.com/eldji.19" target="_blank" class="btn-outline"><i class="fab fa-instagram"></i> Segui su IG</a>
+        </div>
+    </div>
+</section>
+
+<section id="gallery" class="gallery-section">
+    <h2 class="section-title">Il mio <span>Universo Visivo</span></h2>
+    <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+
+<section id="stats" class="stats-section">
+    <div><div class="stat-number">28K+</div><div>Followers</div></div>
+    <div><div class="stat-number">500+</div><div>Progetti</div></div>
+    <div><div class="stat-number">15M+</div><div>Visualizzazioni</div></div>
+    <div><div class="stat-number">24/7</div><div>Sempre attivo</div></div>
+</section>
+
+<section id="contact" class="cta-section">
+    <h2>Entra nella <span style="color:#d4af37;">Famiglia ELDJI</span></h2>
+    <p>Iscriviti per contenuti esclusivi</p>
+    <div class="email-input">
+        <input type="email" placeholder="La tua email" id="emailInput">
+        <button class="btn-primary" id="subscribeBtn">Iscriviti →</button>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="social-icons">
+        <a href="https://instagram.com/eldji.19" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-tiktok"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+    </div>
+    <p>© 2026 ELDJI.19 — Tutti i diritti riservati.</p>
+    <p style="margin-top: 1rem;">✨ The revolution is now ✨</p>
+</footer>
+
+<script>
+    // PARTICOLARE SFONDO
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+    for(let i = 0; i < 60; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 2 + 1,
+            sx: (Math.random() - 0.5) * 0.5,
+            sy: (Math.random() - 0.5) * 0.3,
+            color: `rgba(212, 175, 55, ${Math.random() * 0.4})`
+        });
+    }
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+            p.x += p.sx;
+            p.y += p.sy;
+            if(p.x < 0) p.x = canvas.width;
+            if(p.x > canvas.width) p.x = 0;
+            if(p.y < 0) p.y = canvas.height;
+            if(p.y > canvas.height) p.y = 0;
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // GALLERY CON IMMAGINI GRATUITE E FUNZIONANTI
+    // 🔥 SOSTITUISCI QUESTI URL CON I LINK DELLE TUE FOTO INSTAGRAM 🔥
+    const images = [
+        { title: "THE DON", url: "https://images.pexels.com/photos/2422294/pexels-photo-2422294.jpeg?auto=compress&cs=tinysrgb&w=600" },
+        { title: "GOLDEN CHAIN", url: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600" },
+        { title: "STREET STYLE", url: "https://images.pexels.com/photos/1076885/pexels-photo-1076885.jpeg?auto=compress&cs=tinysrgb&w=600" },
+        { title: "MAFIA VIBES", url: "https://images.pexels.com/photos/1556705/pexels-photo-1556705.jpeg?auto=compress&cs=tinysrgb&w=600" },
+        { title: "URBAN KING", url: "https://images.pexels.com/photos/831078/pexels-photo-831078.jpeg?auto=compress&cs=tinysrgb&w=600" },
+        { title: "CITY LIGHTS", url: "https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=600" },
+        { title: "BOSS MODE", url: "https://images.pexels.com/photos/1130624/pexels-photo-1130624.jpeg?auto=compress&cs=tinysrgb&w=600" },
+        { title: "NIGHT RIDER", url: "https://images.pexels.com/photos/1570809/pexels-photo-1570809.jpeg?auto=compress&cs=tinysrgb&w=600" }
+    ];
+    
+    const grid = document.getElementById('galleryGrid');
+    images.forEach(img => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.innerHTML = `<img src="${img.url}" alt="${img.title}" loading="lazy"><div class="gallery-overlay"><h3>✦ ${img.title} ✦</h3></div>`;
+        item.onclick = () => window.open('https://instagram.com/eldji.19', '_blank');
+        grid.appendChild(item);
+    });
+
+    document.getElementById('subscribeBtn').onclick = () => {
+        const email = document.getElementById('emailInput').value;
+        alert(email ? `Grazie ${email}! Bentornato nella famiglia ELDJI.` : 'Inserisci la tua email');
+    };
+
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', function(e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if(target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+        });
+    });
+</script>
+</body>
+</html>
